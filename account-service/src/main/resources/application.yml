@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: account-service
+
+  config:
+    import:
+      configserver:
+
+  cloud:
+    config:
+      uri: http://config-service:8888
+      fail-fast: true

@@ -1,0 +1,38 @@
+server:
+  port: 8080
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          secret: ${JWT_SECRET}
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        # Account Service — manages user authentication and authorization
+        - id: account-service
+          uri: lb://account-service
+          predicates:
+            - Path=/api/accounts/**
+          filters:
+            - StripPrefix=2 # local service will not have `/api/<*>/` prefix
+        # Task Management Service — manages user tasks: creation, deletion, completion, changes to existing tasks' data
+        - id: task-management-service
+          uri: lb://task-management-service
+          predicates:
+            - Path=/api/tasks/**
+          filters:
+            - StripPrefix=2
+        # Notification Service — will prepare data to send via mail service in a scheduled cron task.
+        # Will utilize events from task service to keep track of user's progress.
+        # Email data will then be sent to mail service through Kafka
+        - id: notification-service
+          uri: lb://notification-service # will not have REST API
+        # Mail Service — will email data through Email provider
+        - id: mail-service
+          uri: lb://mail-service
