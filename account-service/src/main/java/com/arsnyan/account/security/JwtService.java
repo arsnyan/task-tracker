@@ -13,8 +13,8 @@ import java.time.Instant;
 @Service
 @RequiredArgsConstructor
 public class JwtService {
-    private final JwtEncoder jwtEncoder;
     private final RsaKeyProperties rsaKeyProperties;
+    private final JwtEncoder jwtEncoder;
     private final Clock clock;
 
     public String generateToken(User user) {
@@ -25,10 +25,10 @@ public class JwtService {
                 .issuer(rsaKeyProperties.issuer())
                 .issuedAt(now)
                 .expiresAt(expiresAt)
-                .subject(user.email())
-                .claim("userId", user.userId())
-                .claim("username", user.username())
-                .claim("role", user.role())
+                .subject(user.getEmail())
+                .claim("userId", user.getUserId())
+                .claim("username", user.getUsername())
+                .claim("role", user.getRole())
                 .build();
 
         return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();

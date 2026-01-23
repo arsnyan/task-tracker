@@ -4,6 +4,12 @@ server:
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: ${SPRING_DATASOURCE_URL}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/account-service}
     username: ${SPRING_DATASOURCE_USERNAME}
     password: ${SPRING_DATASOURCE_PASSWORD}
+
+jwt:
+  private-key: classpath:certs/private.pem
+  public-key: classpath:certs/public.pem
+  expiration: 7200000 # 2 hours in ms
+  issuer: account-service
