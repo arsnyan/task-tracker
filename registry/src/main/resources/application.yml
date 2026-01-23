@@ -3,19 +3,24 @@ spring:
     name: registry
 
   config:
-    import:
-      configserver:
+    import: "optional:configserver:"
 
   cloud:
     config:
       uri: http://config-service:8888
-      fail-fast: true
+      fail-fast: false
 
 eureka:
   instance:
     prefer-ip-address: true
+    hostname: registry
   client:
     register-with-eureka: false
     fetch-registry: false
   server:
     peer-node-read-timeout-ms: 100000
+    enable-self-preservation: false
+    eviction-interval-timer-in-ms: 5000
+
+server:
+  port: 8761

@@ -1,6 +1,19 @@
 server:
   port: 8888
 
+management:
+  server:
+    port: 8081
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+logging:
+  level:
+    root: INFO
+    org.springframework.cloud: DEBUG
+
 spring:
   profiles:
     active: git

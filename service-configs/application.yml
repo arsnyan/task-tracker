@@ -1,7 +1,7 @@
 eureka:
   client:
     service-url:
-      defaultZone: http://discovery-service:8761/eureka/
+      defaultZone: http://registry:8761/eureka/
     registry-fetch-interval-seconds: 5
   instance:
     prefer-ip-address: true

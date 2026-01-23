@@ -95,10 +95,11 @@ services:
 
   config-service:
     container_name: config-service
-    restart: on-failure
     build: config-service
+    networks:
+      - task-tracker-network
     healthcheck:
-      test: ["CMD-SHELL", "wget", "-q", "--spider", "http://localhost:8081/actuator/health"]
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:8081/actuator/health"]
       interval: 10s
       timeout: 5s
       retries: 3
@@ -106,10 +107,13 @@ services:
 
   registry:
     container_name: registry
-    restart: on-failure
     build: registry
+    networks:
+      - task-tracker-network
+    depends_on:
+      - config-service
     healthcheck:
-      test: ["CMD-SHELL", "wget", "-q", "--spider", "http://localhost:8081/actuator/health"]
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:8081/actuator/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -117,10 +121,13 @@ services:
 
   gateway-service:
     container_name: gateway-service
-    restart: on-failure
     build: gateway-service
+    networks:
+      - task-tracker-network
+    depends_on:
+      - registry
     healthcheck:
-      test: [ "CMD-SHELL", "wget", "-q", "--spider", "http://localhost:8081/actuator/health" ]
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:8081/actuator/health"]
       interval: 10s
       timeout: 5s
       retries: 3
@@ -128,9 +135,10 @@ services:
 
   account-service:
     container_name: account-service
-    restart: on-failure
     build: account-service
     environment:
+      SPRING_PROFILES_ACTIVE: docker
+
       SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/account-service
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
@@ -146,7 +154,7 @@ services:
       registry:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "wget", "-q", "--spider", "http://localhost:8081/actuator/health"]
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:8081/actuator/health"]
       interval: 30s
       timeout: 10s
       retries: 3
