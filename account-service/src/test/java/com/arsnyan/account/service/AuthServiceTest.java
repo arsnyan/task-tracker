@@ -39,6 +39,9 @@ class AuthServiceTest {
     @Mock
     private RsaKeyProperties rsaKeyProperties;
 
+    @Mock
+    private MailPreparationService mailPreparationService;
+
     @InjectMocks
     private AuthService authService;
 
@@ -74,6 +77,7 @@ class AuthServiceTest {
 
             verify(passwordEncoder).encode(RAW_PASSWORD);
             verify(jwtService).generateToken(savedUser);
+            verify(mailPreparationService).sendMessage(registerRequest);
 
             assertThat(response).isNotNull();
             assertThat(response.token()).isEqualTo(JWT_TOKEN);
