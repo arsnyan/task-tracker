@@ -2,11 +2,17 @@ spring:
   config:
     import: "optional:configserver:"
   cloud:
+    discovery:
+      enabled: false
     config:
       enabled: false
+
+eureka:
+  client:
+    enabled: false
 
 jwt:
   private-key: classpath:certs/private.pem
   public-key: classpath:certs/public.pem
-  expiration: 7200000
+  expiration: 2h
   issuer: account-service

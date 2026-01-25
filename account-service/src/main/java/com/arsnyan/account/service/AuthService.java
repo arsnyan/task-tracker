@@ -1,9 +1,9 @@
 package com.arsnyan.account.service;
 
-import com.arsnyan.account.dto.AuthResponse;
-import com.arsnyan.account.dto.LoginRequest;
-import com.arsnyan.account.dto.RegisterRequest;
-import com.arsnyan.account.dto.UserResponse;
+import com.arsnyan.account.dto.AuthResponseDto;
+import com.arsnyan.account.dto.LoginRequestDto;
+import com.arsnyan.account.dto.RegisterRequestDto;
+import com.arsnyan.account.dto.UserResponseDto;
 import com.arsnyan.account.exception.EntityAlreadyExistsException;
 import com.arsnyan.account.exception.InvalidCredentialsException;
 import com.arsnyan.account.model.User;
@@ -25,7 +25,7 @@ public class AuthService {
     private final RsaKeyProperties rsaKeyProperties;
 
     @Transactional
-    public AuthResponse register(RegisterRequest request) {
+    public AuthResponseDto register(RegisterRequestDto request) {
         log.debug("Registering user with email: {}", request.email());
 
         if (userService.existsByUsername(request.username())) {
@@ -46,7 +46,7 @@ public class AuthService {
     }
 
     @Transactional(readOnly = true)
-    public AuthResponse authenticate(LoginRequest request) {
+    public AuthResponseDto authenticate(LoginRequestDto request) {
         log.debug("Authenticating user: {}", request.username());
 
         var user = userService.findByUsernameOrEmail(request.username())
@@ -62,9 +62,9 @@ public class AuthService {
         return createAuthResponse(user);
     }
 
-    private AuthResponse createAuthResponse(User user) {
+    private AuthResponseDto createAuthResponse(User user) {
         var token = jwtService.generateToken(user);
-        var userResponse = UserResponse.from(user);
-        return AuthResponse.of(token, rsaKeyProperties.expiration(), userResponse);
+        var userResponse = UserResponseDto.from(user);
+        return AuthResponseDto.of(token, rsaKeyProperties.expiration().toMillis(), userResponse);
     }
 }

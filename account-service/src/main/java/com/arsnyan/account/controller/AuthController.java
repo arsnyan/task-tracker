@@ -1,9 +1,9 @@
 package com.arsnyan.account.controller;
 
-import com.arsnyan.account.dto.AuthResponse;
-import com.arsnyan.account.dto.LoginRequest;
-import com.arsnyan.account.dto.RegisterRequest;
-import com.arsnyan.account.dto.UserResponse;
+import com.arsnyan.account.dto.AuthResponseDto;
+import com.arsnyan.account.dto.LoginRequestDto;
+import com.arsnyan.account.dto.RegisterRequestDto;
+import com.arsnyan.account.dto.UserResponseDto;
 import com.arsnyan.account.service.AuthService;
 import com.arsnyan.account.service.UserService;
 import jakarta.validation.Valid;
@@ -24,22 +24,22 @@ public class AuthController {
     private final UserService userService;
 
     @PostMapping("/user")
-    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
+    public ResponseEntity<AuthResponseDto> register(@Valid @RequestBody RegisterRequestDto request) {
         var response = authService.register(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<AuthResponseDto> login(@Valid @RequestBody LoginRequestDto request) {
         var response = authService.authenticate(request);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/user")
-    public ResponseEntity<UserResponse> getCurrentUser(@AuthenticationPrincipal Jwt jwt) {
+    public ResponseEntity<UserResponseDto> getCurrentUser(@AuthenticationPrincipal Jwt jwt) {
         var email = jwt.getSubject();
         return userService.findByUsernameOrEmail(email)
-                .map(UserResponse::from)
+                .map(UserResponseDto::from)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }

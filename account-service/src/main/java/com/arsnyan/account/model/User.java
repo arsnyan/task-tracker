@@ -1,10 +1,9 @@
 package com.arsnyan.account.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 @Entity
 @Table(
@@ -15,6 +14,7 @@ import lombok.Setter;
 )
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
@@ -32,11 +32,16 @@ public class User {
     @Column(name = "password", length = 128, nullable = false)
     private String password;
 
-    @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(name = "role", nullable = false)
     private UserRole role;
 
     public static User create(String username, String email, String encodedPassword) {
-        return new User(null, username, email, encodedPassword, UserRole.USER);
+        return User.builder()
+                .username(username)
+                .email(email)
+                .password(encodedPassword)
+                .role(UserRole.USER)
+                .build();
     }
 }

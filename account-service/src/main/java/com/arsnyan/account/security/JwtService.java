@@ -19,7 +19,7 @@ public class JwtService {
 
     public String generateToken(User user) {
         var now = Instant.now(clock);
-        var expiresAt = now.plusMillis(rsaKeyProperties.expiration());
+        var expiresAt = now.plus(rsaKeyProperties.expiration());
 
         var claims = JwtClaimsSet.builder()
                 .issuer(rsaKeyProperties.issuer())
