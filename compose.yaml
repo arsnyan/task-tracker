@@ -1,16 +1,34 @@
 services:
-  database:
+  account-db:
     image: postgres:18.1-alpine
-    container_name: database
+    container_name: account-db
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: account-service
     volumes:
-      - postgres-data:/var/lib/postgresql
+      - account-db-data:/var/lib/postgresql/data
     networks:
       - task-tracker-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER"]
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d account-service"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  task-db:
+    image: postgres:18.1-alpine
+    container_name: task-db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: task-service
+    volumes:
+      - task-db-data:/var/lib/postgresql/data
+    networks:
+      - task-tracker-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d task-service"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -100,10 +118,10 @@ services:
       - task-tracker-network
     healthcheck:
       test: ["CMD-SHELL", "wget -q --spider http://localhost:8081/actuator/health"]
-      interval: 10s
-      timeout: 5s
+      interval: 30s
+      timeout: 10s
       retries: 3
-      start_period: 10s
+      start_period: 60s
 
   registry:
     container_name: registry
@@ -111,7 +129,8 @@ services:
     networks:
       - task-tracker-network
     depends_on:
-      - config-service
+      config-service:
+        condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "wget -q --spider http://localhost:8081/actuator/health"]
       interval: 30s
@@ -125,13 +144,14 @@ services:
     networks:
       - task-tracker-network
     depends_on:
-      - registry
+      registry:
+        condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "wget -q --spider http://localhost:8081/actuator/health"]
-      interval: 10s
-      timeout: 5s
+      interval: 30s
+      timeout: 10s
       retries: 3
-      start_period: 10s
+      start_period: 60s
 
   account-service:
     container_name: account-service
@@ -139,13 +159,13 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: docker
 
-      SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/account-service
+      SPRING_DATASOURCE_URL: jdbc:postgresql://account-db:5432/account-service
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
 
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka-1:9092,kafka-2:9092,kafka-3:9092
     depends_on:
-      database:
+      account-db:
         condition: service_healthy
       kafka-1:
         condition: service_healthy
@@ -177,4 +197,5 @@ networks:
   task-tracker-network:
 
 volumes:
-  postgres-data:
+  account-db-data:
+  task-db-data:

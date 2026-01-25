@@ -11,5 +11,5 @@ spring:
 jwt:
   private-key: classpath:certs/private.pem
   public-key: classpath:certs/public.pem
-  expiration: 7200000 # 2 hours in ms
+  expiration: 2h
   issuer: account-service

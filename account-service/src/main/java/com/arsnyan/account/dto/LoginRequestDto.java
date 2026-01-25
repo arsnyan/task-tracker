@@ -2,7 +2,7 @@ package com.arsnyan.account.dto;
 
 import jakarta.validation.constraints.NotBlank;
 
-public record LoginRequest(
+public record LoginRequestDto(
         @NotBlank(message = "Username or email is required")
         String username,
 
