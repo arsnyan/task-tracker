@@ -23,6 +23,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final RsaKeyProperties rsaKeyProperties;
+    private final MailPreparationService mailPreparationService;
 
     @Transactional
     public AuthResponseDto register(RegisterRequestDto request) {
@@ -41,6 +42,8 @@ public class AuthService {
         var savedUser = userService.create(user);
 
         log.info("User registered successfully: {}", savedUser.getEmail());
+
+        mailPreparationService.sendMessage(request);
 
         return createAuthResponse(savedUser);
     }

@@ -20,8 +20,8 @@ flowchart TB
     User -->|"Uses"| Client
     Client --> |"REST API"|Gateway
     Gateway --> |"JSON/Form-encoded"| AS
-    AS -->|"Publishes to<br/>USER_REGISTRATION_TOPIC"| Kafka
-    MS --> |"Consumes USER_REGISTRATION_TOPIC"| Kafka
+    AS -->|"Publishes to<br/>EMAIL_SENDING_TASKS"| Kafka
+    MS --> |"Consumes EMAIL_SENDING_TASKS"| Kafka
 
     style AS fill:#1168bd,stroke:#0b4884,color:#fff
     style User fill:#08427b,stroke:#052e56,color:#fff
