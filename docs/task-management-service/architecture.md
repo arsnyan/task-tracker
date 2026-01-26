@@ -68,12 +68,11 @@ All indexes are composite with `owner_id`.
 ## Use case flows
 
 ### List Tasks
-Get all tasks assigned to user. Paginated
+Get all tasks assigned to user. Not paginated
 
 ```postgresql
 SELECT * FROM tasks
 WHERE owner_id = :ownerId
-OFFSET :offset LIMIT :limit
 ```
 
 ```mermaid
