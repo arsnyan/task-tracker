@@ -20,6 +20,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Slf4j
@@ -37,7 +38,7 @@ public class TaskService {
     }
 
     public TaskDetailsResponseDto getTaskById(String username, Long id) {
-        var task = taskRepository.finishTaskById(username, id)
+        var task = taskRepository.finishTaskById(username, id, ZonedDateTime.now())
                 .orElseThrow(() -> taskDoesntExistException(id, username));
 
         return new TaskDetailsResponseDto(task);
@@ -65,7 +66,7 @@ public class TaskService {
     public TaskDetailsResponseDto updateTask(Jwt jwt, TaskUpdateRequestDto dto) {
         var username = jwt.getClaimAsString("user");
         var user = userService.getUser(username);
-        var taskForUpdate = taskRepository.findByIdAndOwner(dto.taskId(), user)
+        var taskForUpdate = taskRepository.findByTaskIdAndOwner(dto.taskId(), user)
                 .orElseThrow(() -> taskDoesntExistException(dto.taskId(), username));
 
         if (dto.title() != null) {
@@ -78,7 +79,7 @@ public class TaskService {
 
         if (dto.status() != null) {
             taskForUpdate.setStatus(dto.status());
-            taskRepository.finishTaskById(username, dto.taskId());
+            taskRepository.finishTaskById(username, dto.taskId(), ZonedDateTime.now());
         }
 
         var updatedTask = taskRepository.saveAndFlush(taskForUpdate);
@@ -95,8 +96,9 @@ public class TaskService {
     }
 
     @Transactional
-    public void deleteTask(String username, Long taskId) {
-        taskRepository.deleteByTaskIdAndOwnerUsername(taskId, username);
+    public void deleteTask(Jwt jwt, Long taskId) {
+        taskRepository.deleteByTaskIdAndOwnerUsername(taskId, jwt.getClaimAsString("user"));
+        sendTaskDeletedEvent(jwt.getSubject(), taskId);
     }
 
     private void sendTaskDeletedEvent(String email, Long taskId) {
