@@ -60,7 +60,7 @@ public class TaskController {
             @PathVariable Long id,
             @AuthenticationPrincipal Jwt jwt
     ) {
-        taskService.deleteTask(jwt.getClaimAsString("id"), id);
+        taskService.deleteTask(jwt, id);
         return  ResponseEntity.noContent().build();
     }
 }

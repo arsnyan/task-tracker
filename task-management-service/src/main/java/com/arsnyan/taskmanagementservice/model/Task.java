@@ -40,6 +40,7 @@ public class Task {
 
     @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(name = "status", nullable = false)
+    @Builder.Default
     private TaskStatus status = TaskStatus.CREATED;
 
     @Column(name = "finished_at")

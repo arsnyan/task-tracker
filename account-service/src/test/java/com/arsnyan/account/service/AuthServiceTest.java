@@ -5,6 +5,7 @@ import com.arsnyan.account.dto.RegisterRequestDto;
 import com.arsnyan.account.exception.EntityAlreadyExistsException;
 import com.arsnyan.account.exception.InvalidCredentialsException;
 import com.arsnyan.account.model.User;
+import com.arsnyan.account.model.message.UserEvent;
 import com.arsnyan.account.security.JwtService;
 import com.arsnyan.account.security.RsaKeyProperties;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.Duration;
@@ -38,6 +40,9 @@ class AuthServiceTest {
 
     @Mock
     private RsaKeyProperties rsaKeyProperties;
+
+    @Mock
+    private KafkaTemplate<String, UserEvent> kafkaTemplate;
 
     @Mock
     private MailPreparationService mailPreparationService;

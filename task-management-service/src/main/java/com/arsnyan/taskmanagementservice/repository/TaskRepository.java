@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,11 +22,15 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     @Query("SELECT t FROM Task t WHERE t.owner.username = :ownerUsername AND t.status = :status")
     List<Task> findWithStatus(@Param("ownerUsername") String ownerUsername, @Param("status") TaskStatus status);
 
-    Optional<Task> findByIdAndOwner(Long id, User owner);
+    Optional<Task> findByTaskIdAndOwner(Long taskId, User owner);
 
     @Modifying
-    @Query("UPDATE Task t SET t.finishedAt = now() WHERE t.taskId = :id AND t.owner.username = :ownerUsername")
-    Optional<Task> finishTaskById(@Param("ownerUsername") String ownerUsername, @Param("id") Long taskId);
+    @Query("UPDATE Task t SET t.finishedAt = :finishedAt WHERE t.taskId = :id AND t.owner.username = :ownerUsername")
+    Optional<Task> finishTaskById(
+            @Param("ownerUsername") String ownerUsername,
+            @Param("id") Long taskId,
+            @Param("finishedAt")ZonedDateTime finishedAt
+            );
 
     void deleteByTaskIdAndOwnerUsername(Long taskId, String ownerUsername);
 }
