@@ -2,7 +2,7 @@ package com.arsnyan.account.service;
 
 import com.arsnyan.account.config.KafkaConfiguration;
 import com.arsnyan.account.dto.RegisterRequestDto;
-import com.arsnyan.account.model.EmailTask;
+import com.arsnyan.account.model.message.EmailTask;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;

@@ -182,6 +182,35 @@ services:
     networks:
       - task-tracker-network
 
+  task-management-service:
+    container_name: task-management-service
+    build: task-management-service
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+
+      SPRING_DATASOURCE_URL: jdbc:postgresql://task-db:5432/task-service
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka-1:9092,kafka-2:9092,kafka-3:9092
+    depends_on:
+      task-db:
+        condition: service_healthy
+      kafka-1:
+        condition: service_healthy
+      config-service:
+        condition: service_healthy
+      registry:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD-SHELL", "wget -q --spider http://localhost:8081/actuator/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - task-tracker-network
+
   frontend:
     container_name: frontend
     build: frontend
