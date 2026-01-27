@@ -111,8 +111,7 @@ class AuthControllerTest {
 
             mockMvc.perform(post("/user")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(validRegisterRequest()))
-                        .with(csrf()))
+                        .content(objectMapper.writeValueAsString(validRegisterRequest())))
                     .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.token").value("jwt.token.here"))
                     .andExpect(jsonPath("$.tokenType").value("Bearer"))
@@ -134,8 +133,7 @@ class AuthControllerTest {
 
                 mockMvc.perform(post("/user")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(requestBody))
-                                .with(csrf()))
+                                .content(objectMapper.writeValueAsString(requestBody)))
                         .andExpect(status().isBadRequest());
 
                 verify(authService, never()).register(any(RegisterRequestDto.class));
@@ -147,8 +145,7 @@ class AuthControllerTest {
 
                 mockMvc.perform(post("/user")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(requestBody))
-                                .with(csrf()))
+                                .content(objectMapper.writeValueAsString(requestBody)))
                         .andExpect(status().isBadRequest());
 
                 verify(authService, never()).register(any(RegisterRequestDto.class));
@@ -160,8 +157,7 @@ class AuthControllerTest {
 
                 mockMvc.perform(post("/user")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(requestBody))
-                                .with(csrf()))
+                                .content(objectMapper.writeValueAsString(requestBody)))
                         .andExpect(status().isBadRequest());
 
                 verify(authService, never()).register(any(RegisterRequestDto.class));
@@ -173,8 +169,7 @@ class AuthControllerTest {
 
                 mockMvc.perform(post("/user")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(requestBody))
-                                .with(csrf()))
+                                .content(objectMapper.writeValueAsString(requestBody)))
                         .andExpect(status().isBadRequest());
 
                 verify(authService, never()).register(any(RegisterRequestDto.class));
@@ -186,8 +181,7 @@ class AuthControllerTest {
 
                 mockMvc.perform(post("/user")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(requestBody))
-                                .with(csrf()))
+                                .content(objectMapper.writeValueAsString(requestBody)))
                         .andExpect(status().isBadRequest());
 
                 verify(authService, never()).register(any(RegisterRequestDto.class));
@@ -204,8 +198,7 @@ class AuthControllerTest {
 
             mockMvc.perform(post("/login")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(validLoginRequest()))
-                            .with(csrf()))
+                            .content(objectMapper.writeValueAsString(validLoginRequest())))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.token").value("jwt.token.here"))
                     .andExpect(jsonPath("$.tokenType").value("Bearer"))
@@ -227,8 +220,7 @@ class AuthControllerTest {
 
                 mockMvc.perform(post("/login")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(requestBody))
-                                .with(csrf()))
+                                .content(objectMapper.writeValueAsString(requestBody)))
                         .andExpect(status().isBadRequest());
 
                 verify(authService, never()).authenticate(any(LoginRequestDto.class));
@@ -240,8 +232,7 @@ class AuthControllerTest {
 
                 mockMvc.perform(post("/login")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(requestBody))
-                                .with(csrf()))
+                                .content(objectMapper.writeValueAsString(requestBody)))
                         .andExpect(status().isBadRequest());
 
                 verify(authService, never()).authenticate(any(LoginRequestDto.class));
