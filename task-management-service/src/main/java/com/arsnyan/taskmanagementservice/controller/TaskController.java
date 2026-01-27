@@ -28,7 +28,7 @@ public class TaskController {
     public ResponseEntity<@NonNull List<TaskOverviewResponseDto>> getTasks(
             @AuthenticationPrincipal Jwt jwt
     ) {
-        return ResponseEntity.ok(taskService.getAllByUsername(jwt.getClaimAsString("user")));
+        return ResponseEntity.ok(taskService.getAllByUsername(jwt.getClaimAsString("username")));
     }
 
     @GetMapping("/{id}")
@@ -36,7 +36,7 @@ public class TaskController {
             @PathVariable Long id,
             @AuthenticationPrincipal Jwt jwt
     ) {
-        return ResponseEntity.ok(taskService.getTaskById(jwt.getClaimAsString("id"), id));
+        return ResponseEntity.ok(taskService.getTaskById(jwt.getClaimAsString("username"), id));
     }
 
     @PostMapping
