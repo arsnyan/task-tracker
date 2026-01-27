@@ -46,7 +46,7 @@ public class TaskService {
 
     @Transactional
     public TaskDetailsResponseDto createTask(Jwt jwt, TaskCreateRequestDto dto) {
-        var user = userService.getUser(jwt.getClaimAsString("name"));
+        var user = userService.getUser(jwt.getClaimAsString("username"));
         var newTask = Task.create(user, dto.title(), dto.content());
 
         var createdTask = taskRepository.save(newTask);
@@ -64,7 +64,7 @@ public class TaskService {
 
     @Transactional
     public TaskDetailsResponseDto updateTask(Jwt jwt, TaskUpdateRequestDto dto) {
-        var username = jwt.getClaimAsString("user");
+        var username = jwt.getClaimAsString("username");
         var user = userService.getUser(username);
         var taskForUpdate = taskRepository.findByTaskIdAndOwner(dto.taskId(), user)
                 .orElseThrow(() -> taskDoesntExistException(dto.taskId(), username));
@@ -97,7 +97,7 @@ public class TaskService {
 
     @Transactional
     public void deleteTask(Jwt jwt, Long taskId) {
-        taskRepository.deleteByTaskIdAndOwnerUsername(taskId, jwt.getClaimAsString("user"));
+        taskRepository.deleteByTaskIdAndOwnerUsername(taskId, jwt.getClaimAsString("username"));
         sendTaskDeletedEvent(jwt.getSubject(), taskId);
     }
 

@@ -148,6 +148,10 @@ services:
     depends_on:
       registry:
         condition: service_healthy
+      account-service:
+        condition: service_healthy
+      task-management-service:
+        condition: service_healthy
     ports:
       - "8080:8080"
     healthcheck:

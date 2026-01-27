@@ -20,7 +20,7 @@ public class User {
     @Column(name = "username", unique = true, nullable = false)
     private String username;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY)
     private Set<Task> tasks;
 
     public static User create(Long userId, String username) {
