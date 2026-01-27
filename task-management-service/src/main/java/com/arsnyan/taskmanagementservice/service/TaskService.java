@@ -10,7 +10,6 @@ import com.arsnyan.taskmanagementservice.model.Task;
 import com.arsnyan.taskmanagementservice.model.TaskStatus;
 import com.arsnyan.taskmanagementservice.model.message.TaskCreatedEvent;
 import com.arsnyan.taskmanagementservice.model.message.TaskDeletedEvent;
-import com.arsnyan.taskmanagementservice.model.message.TaskIdentifier;
 import com.arsnyan.taskmanagementservice.model.message.TaskUpdatedEvent;
 import com.arsnyan.taskmanagementservice.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +28,7 @@ import java.util.List;
 public class TaskService {
     private final TaskRepository taskRepository;
     private final UserService userService;
-    private final KafkaTemplate<TaskIdentifier, Object> kafkaTemplate;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
     public List<TaskOverviewResponseDto> getAllByUsername(String username) {
         return taskRepository.findAllTasks(username).stream()
@@ -56,10 +55,8 @@ public class TaskService {
     }
 
     private void sendTaskCreatedEvent(String email, Long taskId, String title) {
-        var taskIdentifier = new TaskIdentifier(email);
         var event = new TaskCreatedEvent(taskId, title);
-
-        kafkaTemplate.send(KafkaConfiguration.TASK_TOPIC_NAME, taskIdentifier, event);
+        kafkaTemplate.send(KafkaConfiguration.TASK_TOPIC_NAME, email, event);
     }
 
     @Transactional
@@ -89,10 +86,8 @@ public class TaskService {
     }
 
     private void sendTaskUpdatedEvent(String email, Long taskId, String title, TaskStatus status) {
-        var taskIdentifier = new TaskIdentifier(email);
         var event = new TaskUpdatedEvent(taskId, title, status.equals(TaskStatus.DONE) ? true : null);
-
-        kafkaTemplate.send(KafkaConfiguration.TASK_TOPIC_NAME, taskIdentifier, event);
+        kafkaTemplate.send(KafkaConfiguration.TASK_TOPIC_NAME, email, event);
     }
 
     @Transactional
@@ -102,10 +97,8 @@ public class TaskService {
     }
 
     private void sendTaskDeletedEvent(String email, Long taskId) {
-        var taskIdentifier = new TaskIdentifier(email);
         var event = new TaskDeletedEvent(taskId);
-
-        kafkaTemplate.send(KafkaConfiguration.TASK_TOPIC_NAME, taskIdentifier, event);
+        kafkaTemplate.send(KafkaConfiguration.TASK_TOPIC_NAME, email, event);
     }
 
     private NoSuchEntityException taskDoesntExistException(Long id, String username) {
