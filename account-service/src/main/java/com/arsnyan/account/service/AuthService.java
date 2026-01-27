@@ -44,7 +44,7 @@ public class AuthService {
         }
 
         var encodedPassword = passwordEncoder.encode(request.password());
-        var user = User.create(request.username(), request.password(), encodedPassword);
+        var user = User.create(request.username(), request.email(), encodedPassword);
         var savedUser = userService.create(user);
 
         log.info("User registered successfully: {}", savedUser.getEmail());

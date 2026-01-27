@@ -7,8 +7,8 @@ import org.springframework.kafka.config.TopicBuilder;
 
 @Configuration
 public class KafkaConfiguration {
-    public static final String EMAIL_SENDING_TASKS_TOPIC_NAME = "EMAIL_SENDING_TASKS";
-    public static final String USER_EVENTS_TOPIC_NAME = "USER_EVENTS";
+    public static final String EMAIL_SENDING_TASKS_TOPIC_NAME = "email_sending_tasks";
+    public static final String USER_EVENTS_TOPIC_NAME = "user_events";
 
     @Bean
     public NewTopic emailSendingTasksTopic() {
