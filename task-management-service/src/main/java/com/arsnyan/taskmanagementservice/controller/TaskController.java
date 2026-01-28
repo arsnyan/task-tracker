@@ -44,7 +44,7 @@ public class TaskController {
             @RequestBody @Valid TaskCreateRequestDto dto,
             @AuthenticationPrincipal Jwt jwt
     ) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(taskService.createTask(jwt, dto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(taskService.createTask(jwt.getClaimAsString("username"), dto));
     }
 
     @PostMapping("/{id}")
@@ -52,7 +52,7 @@ public class TaskController {
             @RequestBody @Valid TaskUpdateRequestDto dto,
             @AuthenticationPrincipal Jwt jwt
     ) {
-        return ResponseEntity.ok(taskService.updateTask(jwt, dto));
+        return ResponseEntity.ok(taskService.updateTask(jwt.getClaimAsString("username"), dto));
     }
 
     @DeleteMapping("/{id}")
@@ -60,7 +60,7 @@ public class TaskController {
             @PathVariable Long id,
             @AuthenticationPrincipal Jwt jwt
     ) {
-        taskService.deleteTask(jwt, id);
+        taskService.deleteTask(jwt.getClaimAsString("username"), id);
         return  ResponseEntity.noContent().build();
     }
 }

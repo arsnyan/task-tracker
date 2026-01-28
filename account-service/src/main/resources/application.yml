@@ -8,3 +8,7 @@ spring:
     config:
       uri: http://config-service:8888
       fail-fast: true
+
+app:
+  email:
+    welcome-user-registered-path: http://config-service:8888/templates/welcome-user-registered.html

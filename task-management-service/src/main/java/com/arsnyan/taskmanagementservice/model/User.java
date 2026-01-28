@@ -20,13 +20,17 @@ public class User {
     @Column(name = "username", unique = true, nullable = false)
     private String username;
 
+    @Column(name = "email", unique = true)
+    private String email;
+
     @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY)
     private Set<Task> tasks;
 
-    public static User create(Long userId, String username) {
+    public static User create(Long userId, String username, String email) {
         return User.builder()
                 .userId(userId)
                 .username(username)
+                .email(email)
                 .build();
     }
 }

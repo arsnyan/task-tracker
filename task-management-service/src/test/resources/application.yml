@@ -18,6 +18,17 @@ spring:
     config:
       enabled: false
 
+  data:
+    redis:
+      host: ${SPRING_REDIS_HOST:localhost}
+      port: ${SPRING_REDIS_PORT:6379}
+      timeout: 2s
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 2
+
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:"localhost:9092"}
     consumer:
@@ -41,3 +52,9 @@ app:
       retry:
         max-attempts: 3
         backoff-ms: 1000
+
+  email:
+    motivational-quote: "Keep up with the good work!"
+    cta-url: ""
+    unsubscribe-url: ""
+    preferences-url: ""
