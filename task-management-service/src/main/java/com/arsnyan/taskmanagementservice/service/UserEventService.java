@@ -26,7 +26,7 @@ public class UserEventService {
     private void handleCreated(UserEvent userEvent) {
         log.info("Adding user {} with ID={}", userEvent.username(), userEvent.userId());
         try {
-            userRepository.save(User.create(userEvent.userId(), userEvent.username()));
+            userRepository.save(User.create(userEvent.userId(), userEvent.username(), userEvent.email()));
         } catch (DataIntegrityViolationException e) {
             log.info("User with ID={} already exists, aborting", userEvent.userId());
         }

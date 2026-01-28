@@ -9,3 +9,11 @@ spring:
     config:
       uri: http://config-service:8888
       fail-fast: false
+
+app:
+  email:
+    daily-task-reminder-main-path: http://config-service:8888/templates/daily-task-reminder-main.html
+    daily-task-reminder-finished-path: http://config-service:8888/templates/daily-task-reminder-finished.html
+    daily-task-reminder-finished-row-path: http://config-service:8888/templates/daily-task-reminder-finished-row.html
+    daily-task-reminder-unfinished-path: http://config-service:8888/templates/daily-task-reminder-unfinished.html
+    daily-task-reminder-unfinished-row-path: http://config-service:8888/templates/daily-task-reminder-unfinished-row.html

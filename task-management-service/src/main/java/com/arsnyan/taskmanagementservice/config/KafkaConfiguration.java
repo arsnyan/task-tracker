@@ -24,13 +24,13 @@ import org.springframework.kafka.support.serializer.DeserializationException;
 @RequiredArgsConstructor
 @Slf4j
 public class KafkaConfiguration {
-    public static final String TASK_TOPIC_NAME = "TASK_TOPIC";
+    public static final String EMAIL_SENDING_TASKS_TOPIC_NAME = "email_sending_tasks";
 
     private final KafkaProperties kafkaProperties;
 
     @Bean
     public NewTopic taskTopic() {
-        return TopicBuilder.name(TASK_TOPIC_NAME)
+        return TopicBuilder.name(EMAIL_SENDING_TASKS_TOPIC_NAME)
                 .partitions(10)
                 .replicas(3)
                 .build();

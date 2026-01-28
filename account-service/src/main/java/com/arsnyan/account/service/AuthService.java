@@ -79,7 +79,7 @@ public class AuthService {
     }
 
     private void sendUserCreatedEvent(User user) {
-        var event = UserEvent.ofCreatedType(user.getUserId(), user.getUsername());
+        var event = UserEvent.ofCreatedType(user.getUserId(), user.getUsername(), user.getEmail());
         kafkaTemplate.send(KafkaConfiguration.USER_EVENTS_TOPIC_NAME, USER_CREATED_EVENT_NAME, event);
     }
 }

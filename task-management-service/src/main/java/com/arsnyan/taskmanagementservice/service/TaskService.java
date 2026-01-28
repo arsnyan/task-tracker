@@ -1,24 +1,18 @@
 package com.arsnyan.taskmanagementservice.service;
 
-import com.arsnyan.taskmanagementservice.config.KafkaConfiguration;
 import com.arsnyan.taskmanagementservice.dto.TaskCreateRequestDto;
 import com.arsnyan.taskmanagementservice.dto.TaskDetailsResponseDto;
 import com.arsnyan.taskmanagementservice.dto.TaskOverviewResponseDto;
 import com.arsnyan.taskmanagementservice.dto.TaskUpdateRequestDto;
 import com.arsnyan.taskmanagementservice.exception.NoSuchEntityException;
 import com.arsnyan.taskmanagementservice.model.Task;
-import com.arsnyan.taskmanagementservice.model.TaskStatus;
-import com.arsnyan.taskmanagementservice.model.message.TaskCreatedEvent;
-import com.arsnyan.taskmanagementservice.model.message.TaskDeletedEvent;
-import com.arsnyan.taskmanagementservice.model.message.TaskUpdatedEvent;
 import com.arsnyan.taskmanagementservice.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Clock;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -28,7 +22,12 @@ import java.util.List;
 public class TaskService {
     private final TaskRepository taskRepository;
     private final UserService userService;
-    private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final Clock clock;
+
+    @Transactional(readOnly = true)
+    public List<Task> findAllWithOwners() {
+        return taskRepository.findAllWithOwners();
+    }
 
     public List<TaskOverviewResponseDto> getAllByUsername(String username) {
         return taskRepository.findAllTasks(username).stream()
@@ -37,31 +36,24 @@ public class TaskService {
     }
 
     public TaskDetailsResponseDto getTaskById(String username, Long id) {
-        var task = taskRepository.finishTaskById(username, id, ZonedDateTime.now())
+        var task = taskRepository.finishTaskById(username, id, ZonedDateTime.now(clock))
                 .orElseThrow(() -> taskDoesntExistException(id, username));
 
         return new TaskDetailsResponseDto(task);
     }
 
     @Transactional
-    public TaskDetailsResponseDto createTask(Jwt jwt, TaskCreateRequestDto dto) {
-        var user = userService.getUser(jwt.getClaimAsString("username"));
+    public TaskDetailsResponseDto createTask(String username, TaskCreateRequestDto dto) {
+        var user = userService.getUser(username);
         var newTask = Task.create(user, dto.title(), dto.content());
 
         var createdTask = taskRepository.save(newTask);
-        sendTaskCreatedEvent(jwt.getSubject(), createdTask.getTaskId(), createdTask.getTitle());
 
         return new TaskDetailsResponseDto(createdTask);
     }
 
-    private void sendTaskCreatedEvent(String email, Long taskId, String title) {
-        var event = new TaskCreatedEvent(taskId, title);
-        kafkaTemplate.send(KafkaConfiguration.TASK_TOPIC_NAME, email, event);
-    }
-
     @Transactional
-    public TaskDetailsResponseDto updateTask(Jwt jwt, TaskUpdateRequestDto dto) {
-        var username = jwt.getClaimAsString("username");
+    public TaskDetailsResponseDto updateTask(String username, TaskUpdateRequestDto dto) {
         var user = userService.getUser(username);
         var taskForUpdate = taskRepository.findByTaskIdAndOwner(dto.taskId(), user)
                 .orElseThrow(() -> taskDoesntExistException(dto.taskId(), username));
@@ -76,29 +68,17 @@ public class TaskService {
 
         if (dto.status() != null) {
             taskForUpdate.setStatus(dto.status());
-            taskRepository.finishTaskById(username, dto.taskId(), ZonedDateTime.now());
+            taskRepository.finishTaskById(username, dto.taskId(), ZonedDateTime.now(clock));
         }
 
-        var updatedTask = taskRepository.saveAndFlush(taskForUpdate);
-        sendTaskUpdatedEvent(jwt.getSubject(), updatedTask.getTaskId(), updatedTask.getTitle(), updatedTask.getStatus());
+        taskRepository.saveAndFlush(taskForUpdate);
 
         return new TaskDetailsResponseDto(taskForUpdate);
     }
 
-    private void sendTaskUpdatedEvent(String email, Long taskId, String title, TaskStatus status) {
-        var event = new TaskUpdatedEvent(taskId, title, status.equals(TaskStatus.DONE) ? true : null);
-        kafkaTemplate.send(KafkaConfiguration.TASK_TOPIC_NAME, email, event);
-    }
-
     @Transactional
-    public void deleteTask(Jwt jwt, Long taskId) {
-        taskRepository.deleteByTaskIdAndOwnerUsername(taskId, jwt.getClaimAsString("username"));
-        sendTaskDeletedEvent(jwt.getSubject(), taskId);
-    }
-
-    private void sendTaskDeletedEvent(String email, Long taskId) {
-        var event = new TaskDeletedEvent(taskId);
-        kafkaTemplate.send(KafkaConfiguration.TASK_TOPIC_NAME, email, event);
+    public void deleteTask(String username, Long taskId) {
+        taskRepository.deleteByTaskIdAndOwnerUsername(taskId, username);
     }
 
     private NoSuchEntityException taskDoesntExistException(Long id, String username) {
