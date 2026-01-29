@@ -51,6 +51,9 @@ app:
         max-attempts: 3
         backoff-ms: 1000
 
+  task-reminder:
+    max-tasks: 5
+
   email:
     motivational-quote: "Keep up with the good work!"
     cta-url: ""
