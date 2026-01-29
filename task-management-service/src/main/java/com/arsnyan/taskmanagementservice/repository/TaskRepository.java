@@ -15,6 +15,7 @@ import java.util.Optional;
 
 public interface TaskRepository extends JpaRepository<Task, Long> {
     @EntityGraph(attributePaths = {"owner"})
+    @Query("SELECT t FROM Task t")
     List<Task> findAllWithOwners();
 
     @Query("SELECT t FROM Task t WHERE t.owner.username = :ownerUsername")

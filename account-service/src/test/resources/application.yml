@@ -6,6 +6,11 @@ spring:
       enabled: false
     config:
       enabled: false
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
 eureka:
   client:
@@ -16,3 +21,13 @@ jwt:
   public-key: classpath:certs/public.pem
   expiration: 2h
   issuer: account-service
+
+app:
+  email:
+    welcome-user-registered-path: classpath:templates/welcome.html
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html

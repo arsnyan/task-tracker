@@ -18,3 +18,9 @@ jwt:
   public-key: classpath:certs/public.pem
   expiration: 2h
   issuer: account-service
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html

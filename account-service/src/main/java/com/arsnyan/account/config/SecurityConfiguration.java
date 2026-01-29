@@ -41,7 +41,10 @@ public class SecurityConfiguration {
                         .requestMatchers(
                                 "/login",
                                 "/.well-known/jwks.json",
-                                "/actuator/health"
+                                "/actuator/health",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/v3/api-docs/**"
                         ).permitAll()
                         .requestMatchers(HttpMethod.POST, "/user").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
