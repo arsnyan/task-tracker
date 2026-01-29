@@ -1,6 +1,6 @@
 package com.arsnyan.mailservice.service;
 
-import com.arsnyan.mailservice.message.EmailTask;
+import com.arsnyan.mailservice.model.message.EmailTask;
 import com.arsnyan.mailservice.repository.EmailLimiter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

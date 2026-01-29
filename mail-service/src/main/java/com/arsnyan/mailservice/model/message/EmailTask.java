@@ -1,4 +1,4 @@
-package com.arsnyan.mailservice.message;
+package com.arsnyan.mailservice.model.message;
 
 public record EmailTask(
         String to,
