@@ -1,0 +1,53 @@
+eureka:
+  client:
+    enabled: false
+
+spring:
+  application:
+    name: mail-service
+  config:
+    import: "optional:configserver:"
+  cloud:
+    discovery:
+      enabled: false
+    config:
+      enabled: false
+
+  data:
+    redis:
+      host: ${SPRING_REDIS_HOST:localhost}
+      port: ${SPRING_REDIS_PORT:6379}
+      timeout: 2s
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 2
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:"localhost:9092"}
+    consumer:
+      group-id: ${spring.application.name}
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: com.arsnyan.mailservice.model.message
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+app:
+  mail:
+    username: ${SMPT_SERVER_USERNAME}
+    password: ${SMPT_SERVER_PASSWORD}
+    daily-limit: 2000
+  kafka:
+    topics:
+      email_sending_tasks: email_sending_tasks
+    consumer:
+      concurrency: 3
+      retry:
+        max-attempts: 3
+        backoff-ms: 1000
