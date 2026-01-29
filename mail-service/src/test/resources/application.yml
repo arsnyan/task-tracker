@@ -40,8 +40,8 @@ spring:
 
 app:
   mail:
-    username: ${SMPT_SERVER_USERNAME}
-    password: ${SMPT_SERVER_PASSWORD}
+    username: user
+    password: passwd
     daily-limit: 2000
   kafka:
     topics:

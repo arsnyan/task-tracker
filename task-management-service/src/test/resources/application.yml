@@ -53,8 +53,22 @@ app:
         max-attempts: 3
         backoff-ms: 1000
 
+  task-reminder:
+    max-tasks: 5
+
   email:
     motivational-quote: "Keep up with the good work!"
     cta-url: ""
     unsubscribe-url: ""
     preferences-url: ""
+    daily-task-reminder-main-path: classpath:templates/daily-task-reminder-main.html
+    daily-task-reminder-finished-path: classpath:templates/daily-task-reminder-finished.html
+    daily-task-reminder-finished-row-path: classpath:templates/daily-task-reminder-finished-row.html
+    daily-task-reminder-unfinished-path: classpath:templates/daily-task-reminder-unfinished.html
+    daily-task-reminder-unfinished-row-path: classpath:templates/daily-task-reminder-unfinished-row.html
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
