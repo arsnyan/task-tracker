@@ -1,8 +1,6 @@
 package com.arsnyan.taskmanagementservice.repository;
 
 import com.arsnyan.taskmanagementservice.model.Task;
-import com.arsnyan.taskmanagementservice.model.TaskStatus;
-import com.arsnyan.taskmanagementservice.model.User;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -21,15 +19,16 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     @Query("SELECT t FROM Task t WHERE t.owner.username = :ownerUsername")
     List<Task> findAllTasks(@Param("ownerUsername") String ownerUsername);
 
-    Optional<Task> findByTaskIdAndOwner(Long taskId, User owner);
+    @Query("SELECT t FROM Task t WHERE t.taskId = :taskId AND t.owner.username = :ownerUsername")
+    Optional<Task> findByIdAndOwner(@Param("taskId") Long taskId, @Param("ownerUsername") String ownerUsername);
 
     @Modifying
     @Query("UPDATE Task t SET t.finishedAt = :finishedAt WHERE t.taskId = :id AND t.owner.username = :ownerUsername")
-    Optional<Task> finishTaskById(
+    void finishTaskById(
             @Param("ownerUsername") String ownerUsername,
             @Param("id") Long taskId,
             @Param("finishedAt")ZonedDateTime finishedAt
-            );
+    );
 
     void deleteByTaskIdAndOwnerUsername(Long taskId, String ownerUsername);
 }

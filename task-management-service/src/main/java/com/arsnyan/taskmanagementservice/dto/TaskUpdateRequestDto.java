@@ -2,15 +2,10 @@ package com.arsnyan.taskmanagementservice.dto;
 
 import com.arsnyan.taskmanagementservice.model.TaskStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 @Schema(description = "Request to update an existing task")
 public record TaskUpdateRequestDto(
-        @Schema(description = "Task ID to update", example = "1")
-        @NotNull
-        Long taskId,
-
         @Schema(description = "Updated task title", example = "Complete project documentation", minLength = 1)
         @Size(min = 1)
         String title,

@@ -79,13 +79,13 @@ public class TaskController {
             @ApiResponse(responseCode = "401", description = "Not authenticated"),
             @ApiResponse(responseCode = "404", description = "Task not found")
     })
-    @PostMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<TaskDetailsResponseDto> updateTask(
             @Parameter(description = "Task ID") @PathVariable Long id,
             @RequestBody @Valid TaskUpdateRequestDto dto,
             @Parameter(hidden = true) @AuthenticationPrincipal Jwt jwt
     ) {
-        return ResponseEntity.ok(taskService.updateTask(jwt.getClaimAsString("username"), dto));
+        return ResponseEntity.ok(taskService.updateTask(jwt.getClaimAsString("username"), id, dto));
     }
 
     @Operation(summary = "Delete a task", description = "Deletes a task by its ID")
