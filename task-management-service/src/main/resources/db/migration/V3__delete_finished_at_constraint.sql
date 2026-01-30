@@ -1,0 +1,2 @@
+ALTER TABLE tasks
+DROP CONSTRAINT chk_finished_at_requires_done;

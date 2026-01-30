@@ -36,7 +36,7 @@ public class TaskService {
     }
 
     public TaskDetailsResponseDto getTaskById(String username, Long id) {
-        var task = taskRepository.finishTaskById(username, id, ZonedDateTime.now(clock))
+        var task = taskRepository.findByIdAndOwner(id, username)
                 .orElseThrow(() -> taskDoesntExistException(id, username));
 
         return new TaskDetailsResponseDto(task);
@@ -53,10 +53,9 @@ public class TaskService {
     }
 
     @Transactional
-    public TaskDetailsResponseDto updateTask(String username, TaskUpdateRequestDto dto) {
-        var user = userService.getUser(username);
-        var taskForUpdate = taskRepository.findByTaskIdAndOwner(dto.taskId(), user)
-                .orElseThrow(() -> taskDoesntExistException(dto.taskId(), username));
+    public TaskDetailsResponseDto updateTask(String username, Long taskId, TaskUpdateRequestDto dto) {
+        var taskForUpdate = taskRepository.findByIdAndOwner(taskId, username)
+                .orElseThrow(() -> taskDoesntExistException(taskId, username));
 
         if (dto.title() != null) {
             taskForUpdate.setTitle(dto.title());
@@ -68,7 +67,7 @@ public class TaskService {
 
         if (dto.status() != null) {
             taskForUpdate.setStatus(dto.status());
-            taskRepository.finishTaskById(username, dto.taskId(), ZonedDateTime.now(clock));
+            taskRepository.finishTaskById(username, taskId, ZonedDateTime.now(clock));
         }
 
         taskRepository.saveAndFlush(taskForUpdate);
